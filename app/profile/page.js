@@ -14,7 +14,6 @@ import {
   LogOut,
 } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function ProfilePage() {
@@ -50,9 +49,30 @@ export default function ProfilePage() {
         );
       }
 
-      setTripCount(
-        Array.isArray(savedTrips) ? savedTrips.length : 0
-      );
+      /*
+       * tripin_trip menyimpan object trip,
+       * bukan array destinasi secara langsung.
+       *
+       * Karena itu kita cek struktur destinations
+       * supaya jumlah destinasi yang tampil benar.
+       */
+      if (
+        savedTrips &&
+        typeof savedTrips === "object" &&
+        !Array.isArray(savedTrips)
+      ) {
+        setTripCount(
+          Array.isArray(savedTrips.destinations)
+            ? savedTrips.destinations.length
+            : 0
+        );
+      } else {
+        setTripCount(
+          Array.isArray(savedTrips)
+            ? savedTrips.length
+            : 0
+        );
+      }
 
       setWishlistCount(
         Array.isArray(savedWishlist)
@@ -60,15 +80,20 @@ export default function ProfilePage() {
           : 0
       );
     } catch (error) {
-      console.error("Gagal membaca data profil:", error);
+      console.error(
+        "Gagal membaca data profil:",
+        error
+      );
     }
   }, []);
 
   const saveProfile = () => {
     const profile = {
       name: name.trim() || "Traveler",
-      email: email.trim() || "traveler@tripin.com",
-      location: location.trim() || "Indonesia",
+      email:
+        email.trim() || "traveler@tripin.com",
+      location:
+        location.trim() || "Indonesia",
     };
 
     localStorage.setItem(
@@ -100,11 +125,14 @@ export default function ProfilePage() {
   return (
     <ProtectedRoute>
       <main className="min-h-screen bg-[#f6fbf8]">
-        <Navbar />
+        {/* 
+          Navbar TIDAK ditulis di sini.
+          Navbar sudah berasal dari app/layout.jsx.
+        */}
 
         {/* HEADER */}
         <section className="border-b border-gray-100 bg-white">
-          <div className="mx-auto max-w-7xl px-6 py-10">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
             <Link
               href="/"
               className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 transition hover:text-emerald-600"
@@ -118,52 +146,57 @@ export default function ProfilePage() {
                 MY PROFILE
               </p>
 
-              <h1 className="mt-2 text-4xl font-black text-gray-900">
+              <h1 className="mt-2 text-3xl font-black text-gray-900 sm:text-4xl">
                 Profil Saya
               </h1>
 
-              <p className="mt-3 text-gray-500">
-                Kelola informasi profil dan perjalananmu
-                di TRIPIN.
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
+                Kelola informasi profil dan
+                perjalananmu di TRIPIN.
               </p>
             </div>
           </div>
         </section>
 
         {/* CONTENT */}
-        <section className="mx-auto max-w-5xl px-6 py-10">
+        <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
           {/* PROFILE CARD */}
           <div className="overflow-hidden rounded-3xl bg-white shadow-sm">
             {/* COVER */}
-            <div className="h-32 bg-emerald-600" />
+            <div className="h-28 bg-emerald-600 sm:h-32" />
 
-            <div className="px-6 pb-7 md:px-8">
+            <div className="px-5 pb-7 sm:px-8">
               {/* AVATAR + BUTTON */}
               <div className="-mt-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                 <div className="flex items-end gap-4">
-                  <div className="flex h-24 w-24 items-center justify-center rounded-3xl border-4 border-white bg-emerald-100 shadow-sm">
+                  {/* AVATAR */}
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl border-4 border-white bg-emerald-100 shadow-sm sm:h-24 sm:w-24">
                     <User
-                      size={42}
-                      className="text-emerald-600"
+                      size={36}
+                      className="text-emerald-600 sm:h-[42px] sm:w-[42px]"
                     />
                   </div>
 
-                  <div className="pb-1">
-                    <h2 className="text-2xl font-black text-gray-900">
+                  {/* NAME */}
+                  <div className="min-w-0 pb-1">
+                    <h2 className="truncate text-xl font-black text-gray-900 sm:text-2xl">
                       {name}
                     </h2>
 
-                    <p className="text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-gray-500">
                       Traveler TRIPIN
                     </p>
                   </div>
                 </div>
 
                 {/* BUTTONS */}
-                <div className="flex flex-wrap gap-3">
+                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                   {!editing ? (
                     <button
-                      onClick={() => setEditing(true)}
+                      type="button"
+                      onClick={() =>
+                        setEditing(true)
+                      }
                       className="flex items-center justify-center gap-2 rounded-xl border border-emerald-200 px-5 py-3 text-sm font-bold text-emerald-600 transition hover:bg-emerald-50"
                     >
                       <Pencil size={17} />
@@ -171,6 +204,7 @@ export default function ProfilePage() {
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={saveProfile}
                       className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
                     >
@@ -180,6 +214,7 @@ export default function ProfilePage() {
                   )}
 
                   <button
+                    type="button"
                     onClick={handleLogout}
                     className="flex items-center justify-center gap-2 rounded-xl bg-red-50 px-5 py-3 text-sm font-bold text-red-500 transition hover:bg-red-100"
                   >
@@ -193,63 +228,75 @@ export default function ProfilePage() {
               <div className="mt-8 grid gap-5 md:grid-cols-2">
                 {/* NAME */}
                 <div>
-                  <label className="mb-2 block text-sm font-bold">
+                  <label
+                    htmlFor="profile-name"
+                    className="mb-2 block text-sm font-bold text-gray-900"
+                  >
                     Nama
                   </label>
 
                   <input
+                    id="profile-name"
                     type="text"
                     value={name}
                     disabled={!editing}
-                    onChange={(e) =>
-                      setName(e.target.value)
+                    onChange={(event) =>
+                      setName(event.target.value)
                     }
-                    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none ${
+                    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${
                       editing
-                        ? "border-gray-200 bg-white focus:border-emerald-500"
-                        : "border-transparent bg-gray-50"
+                        ? "border-gray-200 bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                        : "cursor-not-allowed border-transparent bg-gray-50"
                     }`}
                   />
                 </div>
 
                 {/* EMAIL */}
                 <div>
-                  <label className="mb-2 block text-sm font-bold">
+                  <label
+                    htmlFor="profile-email"
+                    className="mb-2 block text-sm font-bold text-gray-900"
+                  >
                     Email
                   </label>
 
                   <input
+                    id="profile-email"
                     type="email"
                     value={email}
                     disabled={!editing}
-                    onChange={(e) =>
-                      setEmail(e.target.value)
+                    onChange={(event) =>
+                      setEmail(event.target.value)
                     }
-                    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none ${
+                    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${
                       editing
-                        ? "border-gray-200 bg-white focus:border-emerald-500"
-                        : "border-transparent bg-gray-50"
+                        ? "border-gray-200 bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                        : "cursor-not-allowed border-transparent bg-gray-50"
                     }`}
                   />
                 </div>
 
                 {/* LOCATION */}
-                <div>
-                  <label className="mb-2 block text-sm font-bold">
+                <div className="md:col-span-2">
+                  <label
+                    htmlFor="profile-location"
+                    className="mb-2 block text-sm font-bold text-gray-900"
+                  >
                     Lokasi
                   </label>
 
                   <input
+                    id="profile-location"
                     type="text"
                     value={location}
                     disabled={!editing}
-                    onChange={(e) =>
-                      setLocation(e.target.value)
+                    onChange={(event) =>
+                      setLocation(event.target.value)
                     }
-                    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none ${
+                    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${
                       editing
-                        ? "border-gray-200 bg-white focus:border-emerald-500"
-                        : "border-transparent bg-gray-50"
+                        ? "border-gray-200 bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                        : "cursor-not-allowed border-transparent bg-gray-50"
                     }`}
                   />
                 </div>
@@ -260,7 +307,7 @@ export default function ProfilePage() {
           {/* STATISTICS */}
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {/* TRIP */}
-            <div className="rounded-3xl bg-white p-6 shadow-sm">
+            <div className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50">
                 <MapPin
                   size={21}
@@ -272,13 +319,13 @@ export default function ProfilePage() {
                 Destinasi Trip
               </p>
 
-              <p className="mt-1 text-3xl font-black">
+              <p className="mt-1 text-3xl font-black text-gray-900">
                 {tripCount}
               </p>
             </div>
 
             {/* WISHLIST */}
-            <div className="rounded-3xl bg-white p-6 shadow-sm">
+            <div className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50">
                 <Heart
                   size={21}
@@ -290,13 +337,13 @@ export default function ProfilePage() {
                 Wishlist
               </p>
 
-              <p className="mt-1 text-3xl font-black">
+              <p className="mt-1 text-3xl font-black text-gray-900">
                 {wishlistCount}
               </p>
             </div>
 
             {/* STATUS */}
-            <div className="rounded-3xl bg-white p-6 shadow-sm">
+            <div className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
                 <CalendarDays
                   size={21}
@@ -308,15 +355,15 @@ export default function ProfilePage() {
                 Status
               </p>
 
-              <p className="mt-1 text-lg font-black">
+              <p className="mt-1 text-lg font-black text-gray-900">
                 Traveler Aktif
               </p>
             </div>
           </div>
 
           {/* QUICK MENU */}
-          <div className="mt-6 rounded-3xl bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-black">
+          <div className="mt-6 rounded-3xl bg-white p-5 shadow-sm sm:p-6">
+            <h2 className="text-xl font-black text-gray-900">
               Menu Perjalanan
             </h2>
 
@@ -324,14 +371,14 @@ export default function ProfilePage() {
               {/* MY TRIP */}
               <Link
                 href="/my-trip"
-                className="rounded-2xl border border-gray-100 p-5 transition hover:border-emerald-200 hover:bg-emerald-50"
+                className="group rounded-2xl border border-gray-100 p-5 transition hover:border-emerald-200 hover:bg-emerald-50"
               >
                 <MapPin
                   size={22}
                   className="text-emerald-600"
                 />
 
-                <p className="mt-4 font-black">
+                <p className="mt-4 font-black text-gray-900">
                   My Trip
                 </p>
 
@@ -343,14 +390,14 @@ export default function ProfilePage() {
               {/* ITINERARY */}
               <Link
                 href="/itinerary"
-                className="rounded-2xl border border-gray-100 p-5 transition hover:border-emerald-200 hover:bg-emerald-50"
+                className="group rounded-2xl border border-gray-100 p-5 transition hover:border-emerald-200 hover:bg-emerald-50"
               >
                 <CalendarDays
                   size={22}
                   className="text-emerald-600"
                 />
 
-                <p className="mt-4 font-black">
+                <p className="mt-4 font-black text-gray-900">
                   Itinerary
                 </p>
 
@@ -362,14 +409,14 @@ export default function ProfilePage() {
               {/* BUDGET */}
               <Link
                 href="/budget"
-                className="rounded-2xl border border-gray-100 p-5 transition hover:border-emerald-200 hover:bg-emerald-50"
+                className="group rounded-2xl border border-gray-100 p-5 transition hover:border-emerald-200 hover:bg-emerald-50"
               >
                 <Wallet
                   size={22}
                   className="text-emerald-600"
                 />
 
-                <p className="mt-4 font-black">
+                <p className="mt-4 font-black text-gray-900">
                   Budget
                 </p>
 
