@@ -1,0 +1,374 @@
+@import "tailwindcss";
+
+@theme {
+  --font-poppins: 'Poppins', sans-serif;
+  --color-primary: #0F766E;
+  --color-primary-hover: #115E59;
+  --color-secondary: #14B8A6;
+  --color-accent: #D1FAE5;
+  --color-dark: #0F172A;
+  --color-gray-subtle: #64748B;
+  --color-surface: #F8FAFC;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #F8FAFC;
+    color: #0F172A;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    scroll-behavior: smooth;
+  }
+
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Custom utility styles & transitions */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #F1F5F9;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* 3D Card Flip for Authentication (Login <-> Register) */
+.auth-scene {
+  perspective: 1200px;
+  width: 100%;
+}
+
+.auth-card {
+  position: relative;
+  width: 100%;
+  height: 560px;
+  min-height: 560px;
+  transform-style: preserve-3d;
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.auth-card.no-transition {
+  transition: none !important;
+}
+
+.auth-card.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.auth-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background-color: #ffffff;
+  overflow: visible;
+}
+
+.auth-face-front {
+  transform: rotateY(0deg) translateZ(1px);
+  z-index: 2;
+}
+
+.auth-face-back {
+  transform: rotateY(180deg) translateZ(1px);
+  z-index: 1;
+}
+
+/* Accessibility & interaction prevention on hidden side */
+.auth-card:not(.is-flipped) .auth-face-back {
+  pointer-events: none !important;
+  visibility: hidden;
+  z-index: 1;
+}
+
+.auth-card.is-flipped .auth-face-front {
+  pointer-events: none !important;
+  visibility: hidden;
+  z-index: 1;
+}
+
+.auth-card.is-flipped .auth-face-back {
+  pointer-events: auto !important;
+  visibility: visible;
+  z-index: 2;
+}
+
+.auth-card:not(.is-flipped) .auth-face-front {
+  pointer-events: auto !important;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* Card hover utility */
+.card-hover-lift {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+/* ==================================================
+ * Tripin Transition Loading Experience & Dashboard Animations
+ * ================================================== */
+
+@keyframes dashboardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-dashboard-enter {
+  animation: dashboardEntrance 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes tripinFadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-tripin-logo {
+  animation: tripinFadeInScale 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes tripinFadeInText {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-tripin-text {
+  animation: tripinFadeInText 420ms cubic-bezier(0.16, 1, 0.3, 1) 160ms forwards;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+@keyframes tripinPulseGlow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.1);
+  }
+}
+
+.animate-tripin-glow {
+  animation: tripinPulseGlow 2.8s ease-in-out infinite;
+}
+
+@keyframes travelRouteDash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.animate-route-dash {
+  animation: travelRouteDash 1.2s linear infinite;
+}
+
+@keyframes travelPlaneGlide {
+  0% {
+    left: 4%;
+    opacity: 0;
+    transform: translateY(-50%) rotate(0deg) scale(0.85);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(-50%) rotate(0deg) scale(1);
+  }
+  88% {
+    opacity: 1;
+    transform: translateY(-50%) rotate(0deg) scale(1);
+  }
+  100% {
+    left: 92%;
+    opacity: 0;
+    transform: translateY(-50%) rotate(0deg) scale(0.85);
+  }
+}
+
+.animate-plane-glide {
+  animation: travelPlaneGlide 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: left, opacity, transform;
+}
+
+@keyframes tripinProgressWave {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(35%);
+  }
+  100% {
+    transform: translateX(115%);
+  }
+}
+
+.animate-progress-wave {
+  animation: tripinProgressWave 1.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+/* =============================================
+ * Global Utility Animations
+ * ============================================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 450ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger utilities for list items */
+.stagger-1 { animation-delay: 50ms; opacity: 0; }
+.stagger-2 { animation-delay: 100ms; opacity: 0; }
+.stagger-3 { animation-delay: 150ms; opacity: 0; }
+.stagger-4 { animation-delay: 200ms; opacity: 0; }
+.stagger-5 { animation-delay: 250ms; opacity: 0; }
+
+/* Shimmer effect for skeleton loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* Accessibility: Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-dashboard-enter,
+  .animate-tripin-logo,
+  .animate-tripin-text,
+  .animate-fadeIn,
+  .animate-fadeInUp,
+  .animate-slideInRight,
+  .animate-scaleIn,
+  .stagger-1,
+  .stagger-2,
+  .stagger-3,
+  .stagger-4,
+  .stagger-5 {
+    transform: none !important;
+    opacity: 1 !important;
+    animation: none !important;
+  }
+}
+

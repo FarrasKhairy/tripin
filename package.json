@@ -1,23 +1,37 @@
 {
   "name": "tripin",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "data:normalize": "node scripts/data/normalize-destinations.mjs",
+    "data:validate": "node scripts/data/validate-destinations.mjs",
+    "data:report": "node scripts/data/report-destinations.mjs",
+    "data:fetch-indonesia": "node scripts/data/fetch-indonesia-seed.mjs",
+    "data:import": "node scripts/import-destinations.mjs",
+    "test": "node --test scripts/data/*.test.mjs"
   },
   "dependencies": {
-    "lucide-react": "^1.38.0",
-    "next": "16.3.4",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "@supabase/supabase-js": "^2.116.0",
+    "autoprefixer": "^10.6.1",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^1.46.0",
+    "postcss": "^8.5.28",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.4",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.4",
-    "tailwindcss": "^4"
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "vite": "^8.3.0"
   }
 }
